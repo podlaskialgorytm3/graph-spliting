@@ -6,57 +6,56 @@
 
 ssize_t getline(char **lineptr, size_t *n, FILE *stream)
 {
-    char *bufptr = NULL;
-    char *p = bufptr;
-    size_t size;
-    int c;
-
     if (lineptr == NULL || n == NULL || stream == NULL)
     {
         return -1;
     }
 
-    bufptr = *lineptr;
-    size = *n;
-
-    c = fgetc(stream);
-    if (c == EOF)
+    size_t size = *n;
+    if (*lineptr == NULL)
     {
-        return -1;
-    }
-    if (bufptr == NULL)
-    {
-        bufptr = malloc(128);
-        if (bufptr == NULL)
+        size = 1024;
+        *lineptr = malloc(size);
+        if (*lineptr == NULL)
         {
             return -1;
         }
-        size = 128;
     }
-    p = bufptr;
-    while (c != EOF)
+
+    char *bufptr = *lineptr;
+    char *p = bufptr;
+    int c;
+
+    while ((c = fgetc(stream)) != EOF)
     {
-        if ((p - bufptr) > (size - 1))
+        if ((p - bufptr) >= (size - 1))
         {
-            size = size + 128;
-            bufptr = realloc(bufptr, size);
-            if (bufptr == NULL)
+            size *= 2; // Podwajanie rozmiaru bufora
+            char *new_buf = realloc(bufptr, size);
+            if (new_buf == NULL)
             {
                 return -1;
             }
+            p = new_buf + (p - bufptr);
+            bufptr = new_buf;
+            *lineptr = bufptr;
         }
         *p++ = c;
         if (c == '\n')
         {
             break;
         }
-        c = fgetc(stream);
     }
-    *p++ = '\0';
-    *lineptr = bufptr;
+
+    if (p == bufptr && c == EOF)
+    {
+        return -1;
+    }
+
+    *p = '\0';
     *n = size;
 
-    return p - bufptr - 1;
+    return p - bufptr;
 }
 
 edgesPtr insertEdge(edgesPtr list, int sourceNode, int endNode)
