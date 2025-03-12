@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, char **argv)
+#include "../include/graph.h"
+
+int main()
 {
-    printf("In here program will be working!!!\n");
-    prinf("in progress ...");
+    edgesPtr edgeList = edgesInsertion("graf.csrrg"); // Pobieramy bezposrednio z folderu ./data
+    printEdges(edgeList);
+    freeEdges(edgeList);
+
     return 0;
 }
