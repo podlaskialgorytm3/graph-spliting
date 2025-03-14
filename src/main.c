@@ -9,9 +9,5 @@ int main()
     printEdges(edgeList);
     freeEdges(edgeList);
 
-    // graphFragmentsPtr graphFragmentsList = getGraphFragment("graf3.csrrg");
-    // printGraphFragments(graphFragmentsList);
-    // freeGraphFragments(graphFragmentsList);
-
     return 0;
 }
